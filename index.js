@@ -2,6 +2,7 @@ const http = require('http')
 const express = require('express')
 const socketio = require('socket.io')
 const cors = require('cors');
+const path = require("path");
 
 const { addUser, removeUser, getUser, getUsersInRoom } = require('./users')
 
@@ -13,7 +14,12 @@ const io = socketio(server)
 
 app.use(cors());
 app.use(router)
+app.use(express.static(path.join(__dirname, 'build')));
 
+
+app.get('/*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'build', 'index.html'));
+});
 
 io.on('connect', (socket) => {
 	socket.on('join', ({ name, room }, callback) => {
